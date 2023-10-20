@@ -8,6 +8,8 @@ const minify = require("gulp-minify");
 const htmlmin = require("gulp-htmlmin");
 const replace = require("gulp-replace");
 const versionNumber = require("gulp-version-number");
+const toJson = require('vdom-as-json/toJson'); // convert node/patch to JSON
+const fromJson = require('vdom-as-json/fromJson'); // rehydrate node/patch from JSON
 
 function cleanAll() {
     return src(["css/", "publish/", "dist/"], { allowEmpty: true })
@@ -111,13 +113,14 @@ function copyArtifacts() {
         .pipe(dest("dist"));
 }
 
+//    parallel(cssMinify, jsMinify),
 exports.default = series(
     cleanAll,
     parallel(
         cssTranspile,
         series(jsTranspile, jsBundle)
     ),
-    parallel(cssMinify, jsMinify),
+    parallel(cssMinify),
     html,
     setPublishDate,
     changeMustachePath,
